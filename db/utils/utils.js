@@ -15,7 +15,6 @@ exports.makeRefObj = (list) => {
 
 exports.formatComments = (comments, articleRef) => {
   if (!comments.length) return [];
-
   return comments.map((comment) => {
     return (formattedComment = {
       body: comment.body,
