@@ -13,4 +13,18 @@ exports.makeRefObj = (list) => {
   return authorRef;
 };
 
-exports.formatComments = (comments, articleRef) => {};
+exports.formatComments = (comments, articleRef) => {
+  if (!comments.length) return [];
+
+  const formattedComments = comments.map((comment) => {
+    const formattedComment = {
+      body: comment.body,
+      article_id: articleRef[comment.belongs_to],
+      author: comment.created_by,
+      votes: comment.votes,
+      created_at: new Date(comment.created_at),
+    };
+    return formattedComment;
+  });
+  return formattedComments;
+};

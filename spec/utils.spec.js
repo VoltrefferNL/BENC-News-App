@@ -67,7 +67,7 @@ describe("formatDates", () => {
   });
 });
 
-describe.only("makeRefObj", () => {
+describe("makeRefObj", () => {
   it("Create a new object when passed an array", () => {
     const emptyArr = [];
     const testFunc = makeRefObj(emptyArr);
@@ -92,4 +92,75 @@ describe.only("makeRefObj", () => {
   });
 });
 
-describe("formatComments", () => {});
+describe.only("formatComments", () => {
+  it("returns an array when processing inputs", () => {
+    const comments = [];
+    const articleRef = {};
+    const testFunc = formatComments(comments, articleRef);
+    expect(testFunc).to.eql([]);
+  });
+  it("changes created_by property to an author key", () => {
+    const comments = [{ created_by: "icellusedkars" }];
+    const articleRef = { "Living in the shadow of a great man": 1 };
+    const testFunc = formatComments(comments, articleRef);
+    expect(testFunc[0]).to.not.include.key("created_by");
+    expect(testFunc[0]).to.include({ author: "icellusedkars" });
+  });
+  it("changes `belongs_to` to `article_id`", () => {
+    const comments = [{ belongs_to: "Living in the shadow of a great man" }];
+    const articleRef = { "Living in the shadow of a great man": 1 };
+    const testFunc = formatComments(comments, articleRef);
+    expect(testFunc[0]).to.include.keys("article_id");
+    expect(testFunc[0]).to.not.include.keys("belongs_to");
+  });
+  it("article_id is coresponding with the original title value provided", () => {
+    const comments = [
+      {
+        body: " I carry a log — yes. Is it funny to you? It is not to me.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "icellusedkars",
+        votes: -100,
+        created_at: 1416746163389,
+      },
+    ];
+    const articleRef = { "Living in the shadow of a great man": 1 };
+    const testFunc = formatComments(comments, articleRef);
+    expect(testFunc[0]).to.include({ article_id: 1 });
+  });
+  it("created_at value is converted into a js date object", () => {
+    const comments = [
+      {
+        body: " I carry a log — yes. Is it funny to you? It is not to me.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "icellusedkars",
+        votes: -100,
+        created_at: 1416746163389,
+      },
+    ];
+    const articleRef = { "Living in the shadow of a great man": 1 };
+    const testFunc = formatComments(comments, articleRef);
+    expect(testFunc[0].created_at).to.eql(new Date(1416746163389));
+  });
+  it("retains all other original properties", () => {
+    const comments = [
+      {
+        body: " I carry a log — yes. Is it funny to you? It is not to me.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "icellusedkars",
+        votes: -100,
+        created_at: 1416746163389,
+      },
+    ];
+    const articleRef = { "Living in the shadow of a great man": 1 };
+    const testFunc = formatComments(comments, articleRef);
+    expect(testFunc).to.eql([
+      {
+        body: " I carry a log — yes. Is it funny to you? It is not to me.",
+        votes: -100,
+        created_at: new Date(1416746163389),
+        article_id: 1,
+        author: "icellusedkars",
+      },
+    ]);
+  });
+});
