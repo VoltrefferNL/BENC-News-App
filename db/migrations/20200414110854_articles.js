@@ -5,10 +5,13 @@ exports.up = function (knex) {
     articlesTable.string("title").notNullable();
     articlesTable.text("body").notNullable();
     articlesTable.integer("votes").defaultTo(0);
-    articlestable.string("topic").references("topics.slug").notNullable();
+    articlesTable.string("topic").references("topics.slug").notNullable();
     articlesTable.string("author").references("users.username").notNullable();
-    articlesTable.timestap("created_at").defaultTo(knex.fn.now());
+    articlesTable.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };
 
-exports.down = function (knex) {};
+exports.down = function (knex) {
+  console.log("Removing articles table from database");
+  return knex.schema.dropTable("articles");
+};
