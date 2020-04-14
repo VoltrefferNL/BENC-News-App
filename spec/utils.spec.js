@@ -67,6 +67,29 @@ describe("formatDates", () => {
   });
 });
 
-describe("makeRefObj", () => {});
+describe.only("makeRefObj", () => {
+  it("Create a new object when passed an array", () => {
+    const emptyArr = [];
+    const testFunc = makeRefObj(emptyArr);
+    const emptyObj = {};
+    expect(testFunc).to.eql(emptyObj);
+  });
+  it("Takes an array with one entree and returns an object with mutated data", () => {
+    const oneEntreeArr = [{ article_id: 1, title: "A" }];
+    const resultObj = { A: 1 };
+    const testFunc = makeRefObj(oneEntreeArr);
+    expect(testFunc).to.eql(resultObj);
+  });
+  it("Takes an array with multiple entrees and returns an object with mutated data", () => {
+    const multipleEntreeArr = [
+      { article_id: 1, title: "A" },
+      { article_id: 2, title: "B" },
+      { article_id: 3, title: "C" },
+    ];
+    const resultObj = { A: 1, B: 2, C: 3 };
+    const testFunc = makeRefObj(multipleEntreeArr);
+    expect(testFunc).to.eql(resultObj);
+  });
+});
 
 describe("formatComments", () => {});
