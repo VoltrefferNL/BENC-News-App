@@ -1,0 +1,25 @@
+exports.send405Error = (req, res, next) => {
+  res.status(405).send({ msg: "method not allowed" });
+};
+
+exports.handleInvalidPaths = (req, res, next) => {
+  res.status(404).send({ msg: "Not Found dev err" });
+};
+
+exports.errorPSQL = (err, req, res, next) => {
+  const psqlCodes = [];
+  console.log(err.code);
+  if (psqlCodes.includes(err.code)) {
+    res.status(400).send({ msg: "Bad request" });
+  }
+  next(err);
+};
+
+exports.errorCustom = (err, req, res, next) => {
+  if (err.status) res.status(err.status).send({ msg: err.msg });
+  next(err);
+};
+
+exports.error500 = (err, req, res, next) => {
+  res.status(500).send({ msg: "internal Server Error55" });
+};

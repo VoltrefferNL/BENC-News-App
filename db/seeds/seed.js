@@ -18,13 +18,11 @@ exports.seed = function (knex) {
     })
     .then(() => {
       const reformattedArticles = formatDates(articleData);
-      return knex("articles")
-        .insert(reformattedArticles)
-        .returning("*")
-        .then((articleRows) => {
-          const articleRef = makeRefObj(articleRows);
-          const formattedComments = formatComments(commentData, articleRef);
-          return knex("comments").insert(formattedComments);
-        });
+      return knex("articles").insert(reformattedArticles).returning("*");
+    })
+    .then((articleRows) => {
+      const articleRef = makeRefObj(articleRows);
+      const formattedComments = formatComments(commentData, articleRef);
+      return knex("comments").insert(formattedComments);
     });
 };
