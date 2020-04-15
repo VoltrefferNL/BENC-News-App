@@ -58,6 +58,7 @@ describe.only("/api", () => {
           .then(({ body: { users } }) => {
             expect(users).to.be.an("array");
             expect(users[0]).to.have.all.keys("username", "avatar_url", "name");
+            expect(users[0].username).to.equal("rogersop");
           });
       });
       it("Returns a 404 error when the user doesn't excist", () => {
