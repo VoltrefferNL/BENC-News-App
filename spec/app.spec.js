@@ -6,6 +6,8 @@ const chai = require("chai");
 const chaiSorted = require("chai-sorted");
 const { expect } = chai;
 
+beforeEach(() => connection.seed.run());
+
 describe("/api", () => {
   after(() => connection.destroy());
   describe("/topics", () => {
@@ -16,6 +18,10 @@ describe("/api", () => {
         .then((res) => {
           console.log(res.body);
           expect(res.body.topics).to.be.an("array");
+          expect(res.body).to.include.keys("topics");
+          res.body.topics.forEach((topic) => {
+            expect(topic).to.have.all.keys("description", "slug");
+          });
         });
     });
     it("Gives an 404 error when path isn't correct", () => {
