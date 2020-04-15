@@ -35,3 +35,17 @@ exports.updateVote = (article_id, inc_votes) => {
       return article;
     });
 };
+
+exports.postCommentToArticle = (article_id, postedComment) => {
+  return connection
+    .insert({
+      body: postedComment.body,
+      article_id: article_id,
+      author: postedComment.username,
+    })
+    .into("comments")
+    .returning("*")
+    .then((comment) => {
+      return comment;
+    });
+};

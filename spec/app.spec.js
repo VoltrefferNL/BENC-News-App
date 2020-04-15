@@ -179,7 +179,40 @@ describe("/api", () => {
       });
     });
   });
-  describe("/api/articles/:article_id/comments", () => {
-    describe("POST", () => {});
+  describe.only("/api/articles/:article_id/comments", () => {
+    describe("POST", () => {
+      it("Returns a 201 status and adds a new comment to an article, then send the comment back", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({ username: "rogersop", body: "WHAT A LOAD OF BULL****" })
+          .expect(201)
+
+          .then(({ body: { comment } }) => {
+            expect(comment[0].comment_id).to.equal(19);
+            expect(comment[0].body).to.equal("WHAT A LOAD OF BULL****");
+            expect(comment[0]).to.contain.keys(
+              "comment_id",
+              "votes",
+              "created_at",
+              "author",
+              "body",
+              "article_id"
+            );
+            expect(comment[0].author).to.equal("rogersop");
+          });
+      });
+      it("Returns a 400 and a bad request error message if the key is not correct", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({
+            username: "rogersop",
+            THIS_DOES_NOT_WORK: "WHAT A LOAD OF BULL****",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
+    });
   });
 });

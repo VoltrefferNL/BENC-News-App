@@ -6,3 +6,14 @@ exports.checkPatchVotesBody = (req, res, next) => {
     });
   } else next();
 };
+
+exports.checkPostCommentBody = (req, res, next) => {
+  const neededKeys = ["username", "body"];
+  if (neededKeys.every((key) => Object.keys(req.body).includes(key))) {
+    next();
+  } else
+    next({
+      status: 400,
+      msg: "Bad request",
+    });
+};

@@ -1,5 +1,8 @@
-const { getArticle, updateVote } = require("../models/articles.models");
-const { checkVotesBody } = require("../middelware");
+const {
+  getArticle,
+  updateVote,
+  postCommentToArticle,
+} = require("../models/articles.models");
 
 exports.sendArticle = (req, res, next) => {
   const { article_id } = req.params;
@@ -16,6 +19,16 @@ exports.patchVotes = (req, res, next) => {
   updateVote(article_id, inc_votes, req.body)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const postedComment = req.body;
+  postCommentToArticle(article_id, postedComment)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch(next);
 };
