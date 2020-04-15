@@ -36,7 +36,7 @@ describe.only("/api", () => {
           });
       });
       it("Respondes with a status:405 when invalid request methods are used", () => {
-        const invalidMethods = ["patch", "post", "delete"];
+        const invalidMethods = ["patch", "post", "delete", "put"];
         const methodPromises = invalidMethods.map((method) => {
           return request(app)
             [method]("/api/topics")
@@ -59,6 +59,26 @@ describe.only("/api", () => {
             expect(users).to.be.an("array");
             expect(users[0]).to.have.all.keys("username", "avatar_url", "name");
           });
+      });
+      it("Returns a 404 error when the user doesn't excist", () => {
+        return request(app)
+          .get("/api/users/bert5")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("No user found for bert5");
+          });
+      });
+      it("Respondes with a status:405 when invalid request methods are used", () => {
+        const invalidMethods = ["patch", "post", "delete", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/users/rogersop")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
       });
     });
   });
