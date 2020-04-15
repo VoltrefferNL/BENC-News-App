@@ -128,7 +128,7 @@ describe("/api", () => {
         return Promise.all(methodPromises);
       });
     });
-    describe.only("PATCH", () => {
+    describe("PATCH", () => {
       it("Accepts an object send in a specific form for a patch request, then returns the article with updated vote count as indicated.", () => {
         return request(app)
           .patch("/api/articles/5")
@@ -151,26 +151,13 @@ describe("/api", () => {
             });
           });
       });
-      it("Returns a 200 and the unchanged object when key is not inc_votes", () => {
+      it("Returns a 400 and a bad request error message if the key is not correct", () => {
         return request(app)
           .patch("/api/articles/5")
           .send({ This_is_not_ok: 5 })
-          .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles).to.be.an("array");
-            expect(articles[0].article_id).to.equal(5);
-            expect(articles[0].votes).to.equal(0);
-            articles.forEach((article) => {
-              expect(article).to.have.all.keys(
-                "author",
-                "title",
-                "article_id",
-                "body",
-                "topic",
-                "created_at",
-                "votes"
-              );
-            });
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
           });
       });
       it("Returns a 404 error when the article doesn't excist", () => {
@@ -191,5 +178,8 @@ describe("/api", () => {
           });
       });
     });
+  });
+  describe("/api/articles/:article_id/comments", () => {
+    describe("POST", () => {});
   });
 });
