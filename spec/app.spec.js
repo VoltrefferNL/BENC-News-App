@@ -116,7 +116,7 @@ describe.only("/api", () => {
           });
       });
       it("Respondes with a status:405 when invalid request methods are used", () => {
-        const invalidMethods = ["patch", "post", "delete", "put"];
+        const invalidMethods = ["post", "delete", "put"];
         const methodPromises = invalidMethods.map((method) => {
           return request(app)
             [method]("/api/articles/5")
@@ -127,6 +127,32 @@ describe.only("/api", () => {
         });
         return Promise.all(methodPromises);
       });
+    });
+    describe.only("PATCH", () => {
+      it("Accepts an object send in a specific form for a patch request, then returns the article with updated vote count as indicated.", () => {
+        return request(app)
+          .patch("/api/articles/5")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles[0].article_id).to.equal(5);
+            expect(articles[0].votes).to.equal(1);
+            articles.forEach((article) => {
+              expect(article).to.have.all.keys(
+                "author",
+                "title",
+                "article_id",
+                "body",
+                "topic",
+                "created_at",
+                "votes",
+                "comment_count"
+              );
+            });
+          });
+      });
+      // it("Responds with the updated article when votes are changed", () => {});
     });
   });
 });
