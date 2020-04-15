@@ -83,4 +83,50 @@ describe.only("/api", () => {
       });
     });
   });
+  describe.only("/articles/:article_id", () => {
+    describe("GET", () => {
+      it("Responds with an article object, which should have the following properties: author, title, article_id, body, topic, created_at, votes, comment_count", () => {
+        return request(app)
+          .get("/api/articles/5")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles[0].article_id).to.equal(5);
+            expect(articles[0].comment_count).to.equal("2");
+            articles.forEach((article) => {
+              expect(article).to.have.all.keys(
+                "author",
+                "title",
+                "article_id",
+                "body",
+                "topic",
+                "created_at",
+                "votes",
+                "comment_count"
+              );
+            });
+          });
+      });
+      it("Returns a 404 error when the user doesn't excist", () => {
+        return request(app)
+          .get("/api/articles/15")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("No article found for 15");
+          });
+      });
+      it("Respondes with a status:405 when invalid request methods are used", () => {
+        const invalidMethods = ["patch", "post", "delete", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/articles/5")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
+    });
+  });
 });
