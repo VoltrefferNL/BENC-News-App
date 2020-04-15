@@ -7,9 +7,9 @@ exports.handleInvalidPaths = (req, res, next) => {
 };
 
 exports.errorPSQL = (err, req, res, next) => {
-  const psqlCodes = ["42703"];
+  const psqlCodes = ["42703", "22P02"];
   console.log(err.code);
-  console.log(err);
+
   if (psqlCodes.includes(err.code)) {
     res.status(400).send({ msg: "Bad request" });
   }

@@ -10,7 +10,7 @@ chai.use(require("sams-chai-sorted"));
 
 beforeEach(() => connection.seed.run());
 
-describe.only("/api", () => {
+describe("/api", () => {
   after(() => connection.destroy());
   describe("/topics", () => {
     describe("GET", () => {
@@ -83,7 +83,7 @@ describe.only("/api", () => {
       });
     });
   });
-  describe.only("/articles/:article_id", () => {
+  describe("/articles/:article_id", () => {
     describe("GET", () => {
       it("Responds with an article object, which should have the following properties: author, title, article_id, body, topic, created_at, votes, comment_count", () => {
         return request(app)
@@ -107,7 +107,7 @@ describe.only("/api", () => {
             });
           });
       });
-      it("Returns a 404 error when the user doesn't excist", () => {
+      it("Returns a 404 error when the article doesn't excist", () => {
         return request(app)
           .get("/api/articles/15")
           .expect(404)
@@ -132,12 +132,12 @@ describe.only("/api", () => {
       it("Accepts an object send in a specific form for a patch request, then returns the article with updated vote count as indicated.", () => {
         return request(app)
           .patch("/api/articles/5")
-          .send({ inc_votes: 1 })
+          .send({ inc_votes: 5 })
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.an("array");
             expect(articles[0].article_id).to.equal(5);
-            expect(articles[0].votes).to.equal(1);
+            expect(articles[0].votes).to.equal(5);
             articles.forEach((article) => {
               expect(article).to.have.all.keys(
                 "author",
@@ -146,13 +146,50 @@ describe.only("/api", () => {
                 "body",
                 "topic",
                 "created_at",
-                "votes",
-                "comment_count"
+                "votes"
               );
             });
           });
       });
-      // it("Responds with the updated article when votes are changed", () => {});
+      it("Returns a 200 and the unchanged object when key is not inc_votes", () => {
+        return request(app)
+          .patch("/api/articles/5")
+          .send({ This_is_not_ok: 5 })
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles[0].article_id).to.equal(5);
+            expect(articles[0].votes).to.equal(0);
+            articles.forEach((article) => {
+              expect(article).to.have.all.keys(
+                "author",
+                "title",
+                "article_id",
+                "body",
+                "topic",
+                "created_at",
+                "votes"
+              );
+            });
+          });
+      });
+      it("Returns a 404 error when the article doesn't excist", () => {
+        return request(app)
+          .get("/api/articles/115")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("No article found for 115");
+          });
+      });
+      it("Returns a 400 error when passed an object with an invalid value", () => {
+        return request(app)
+          .patch("/api/articles/5")
+          .send({ inc_votes: "I am not a number" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
     });
   });
 });

@@ -18,3 +18,20 @@ exports.getArticle = (article_id) => {
       return article;
     });
 };
+
+exports.updateVote = (article_id, inc_votes) => {
+  return connection
+    .where("article_id", article_id)
+    .increment("votes", inc_votes || 0)
+    .returning("*")
+    .from("articles")
+    .then((article) => {
+      if (!article.length) {
+        return Promise.reject({
+          status: 404,
+          msg: `No article found for ${article_id}`,
+        });
+      }
+      return article;
+    });
+};
