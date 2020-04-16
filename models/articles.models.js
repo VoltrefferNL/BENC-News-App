@@ -2,7 +2,15 @@ const connection = require("../db/connection");
 
 exports.getArticle = (article_id) => {
   return connection("articles")
-    .select("articles.*")
+    .select(
+      "articles.author",
+      "articles.title",
+      "articles.body",
+      "articles.article_id",
+      "articles.topic",
+      "articles.created_at",
+      "articles.votes"
+    )
     .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
     .count("comments.article_id AS comment_count")
     .groupBy("articles.article_id")
