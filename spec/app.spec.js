@@ -177,6 +177,18 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
+        const invalidMethods = ["post", "delete", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/articles/5")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
     });
   });
   describe("/articles/:article_id/comments", () => {
@@ -236,6 +248,18 @@ describe("/api", () => {
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("Bad request");
           });
+      });
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
+        const invalidMethods = ["patch", "delete", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/articles/5/comments")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
       });
     });
     describe("GET", () => {
@@ -320,6 +344,18 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
+        const invalidMethods = ["patch", "delete", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/articles/5/comments")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
     });
   });
   describe("/articles", () => {
@@ -387,7 +423,7 @@ describe("/api", () => {
           .get("/api/articles?author=bertus")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Not found");
+            expect(msg).to.equal("No articles found by bertus / undefined");
           });
       });
       it("Responds with statuscode 404, and an error message when passed an existing author with no articles", () => {
@@ -418,9 +454,21 @@ describe("/api", () => {
             expect(msg).to.equal("No articles found by undefined / paper");
           });
       });
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
+        const invalidMethods = ["patch", "delete", "put", "post"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/articles/")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
     });
   });
-  describe.("/comments/:comment_id", () => {
+  describe("/comments/:comment_id", () => {
     describe("PATCH", () => {
       it("Accepts an object send in a specific form for a patch request, then responds with statuscode 200, and a comment with updated vote count as indicated.", () => {
         return request(app)
