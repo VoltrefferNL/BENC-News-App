@@ -344,6 +344,80 @@ describe("/api", () => {
             expect(articles).to.be.descendingBy("created_at");
           });
       });
+      it("Responds with an array of articles sorted according to queries", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles).to.be.descendingBy("title");
+          });
+      });
+      it("Responds with an array of articles sorted according to queries", () => {
+        return request(app)
+          .get("/api/articles?order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles).to.be.sortedBy("created_at");
+          });
+      });
+      it("Responds with an 400 status code and error message when passed an invalid sort column", () => {
+        return request(app)
+          .get("/api/articles?sort_by=asc")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
+      it.only("Responds to an author query and returns an array of articles by queried author", () => {
+        return request(app)
+          .get("/api/articles?author=butter_bridge")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            articles.forEach((article) => {
+              expect(article.author).to.equal("butter_bridge");
+              expect(articles.length).to.equal(3);
+            });
+          });
+      });
+      it("Responds with an 404 status code and error message when passed an invalid author query", () => {
+        return request(app)
+          .get("/api/articles?author=bertus")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Not found");
+          });
+      });
+      it("Responds with an 404 status code and error message when passed an existing author with no articles", () => {
+        return request(app)
+          .get("/api/articles?author=lurker")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("No articles found by lurker / undefined");
+          });
+      });
+      it("Responds to an topic query and returns an array of articles by queried topic", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            articles.forEach((article) => {
+              expect(article.topic).to.equal("mitch");
+              expect(articles.length).to.equal(11);
+            });
+          });
+      });
+      it("Responds with an 404 status code and error message when passed an existing topic with no articles", () => {
+        return request(app)
+          .get("/api/articles?topic=paper")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("No articles found by undefined / paper");
+          });
+      });
     });
   });
 });

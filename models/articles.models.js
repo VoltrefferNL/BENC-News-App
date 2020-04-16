@@ -42,11 +42,11 @@ exports.updateVote = (article_id, inc_votes) => {
     });
 };
 
-exports.postCommentToArticle = (article_id, postedComment) => {
+exports.postCommentToArticle = ({ article_id }, postedComment) => {
   return connection("comments")
     .insert({
       body: postedComment.body,
-      article_id: article_id,
+      article_id,
       author: postedComment.username,
     })
     .returning("*")
@@ -71,7 +71,7 @@ exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {
     });
 };
 
-exports.getArticles = ({ sort_by, order }) => {
+exports.getArticles = ({ sort_by, order, author, topic }) => {
   return connection("articles")
     .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
     .select(
@@ -85,7 +85,32 @@ exports.getArticles = ({ sort_by, order }) => {
     .groupBy("articles.article_id", "comments.article_id")
     .count("comments.article_id AS comment_count")
     .orderBy(sort_by || "created_at", order || "desc")
-    .then((articles) => {
-      return articles;
+    .modify((articleQuery) => {
+      if (author) {
+        articleQuery.where("articles.author", "=", author);
+      }
+    })
+    .modify((articleQuery) => {
+      if (topic) {
+        articleQuery.where("articles.topic", "=", topic);
+      }
+    })
+    .then((comments) => {
+      if (!comments.length) {
+        return Promise.reject({
+          status: 404,
+          msg: `No articles found by ${author} / ${topic}`,
+        });
+      }
+      return comments;
+    });
+};
+
+exports.checkInDb = (valueToCheck, column, table) => {
+  return connection(table)
+    .select("*")
+    .where(column, valueToCheck)
+    .then((results) => {
+      return results.length !== 0;
     });
 };
