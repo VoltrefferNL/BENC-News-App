@@ -3,6 +3,7 @@ const {
   updateVote,
   postCommentToArticle,
   getCommentsOnArticle,
+  getArticles,
 } = require("../models/articles.models");
 
 exports.sendArticle = (req, res, next) => {
@@ -40,6 +41,15 @@ exports.getComments = (req, res, next) => {
   getCommentsOnArticle({ article_id, sort_by, order })
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.sendArticles = (req, res, next) => {
+  const { sort_by, order } = req.query;
+  getArticles({ sort_by, order })
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch(next);
 };

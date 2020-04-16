@@ -179,7 +179,7 @@ describe("/api", () => {
       });
     });
   });
-  describe.only("/api/articles/:article_id/comments", () => {
+  describe("/articles/:article_id/comments", () => {
     describe("POST", () => {
       it("Returns a 201 status and adds a new comment to an article, then send the comment back", () => {
         return request(app)
@@ -238,7 +238,7 @@ describe("/api", () => {
           });
       });
     });
-    describe.only("GET", () => {
+    describe("GET", () => {
       it("Returns a status 200, and an array of comments for given article id", () => {
         return request(app)
           .get("/api/articles/1/comments")
@@ -318,6 +318,30 @@ describe("/api", () => {
           .expect(400)
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("Bad request");
+          });
+      });
+    });
+  });
+  describe.only("/articles", () => {
+    describe("GET", () => {
+      it("Responds with a 200 status and an articles array that includes article objects", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            articles.forEach((article) => {
+              expect(article).to.have.all.keys(
+                "author",
+                "title",
+                "article_id",
+                "topic",
+                "created_at",
+                "votes",
+                "comment_count"
+              );
+            });
+            expect(articles).to.be.descendingBy("created_at");
           });
       });
     });

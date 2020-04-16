@@ -65,3 +65,22 @@ exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {
       return comments;
     });
 };
+
+exports.getArticles = ({ sort_by, order }) => {
+  return connection("articles")
+    .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
+    .select(
+      "articles.author",
+      "articles.title",
+      "articles.article_id",
+      "articles.topic",
+      "articles.created_at",
+      "articles.votes"
+    )
+    .groupBy("articles.article_id", "comments.article_id")
+    .count("comments.article_id AS comment_count")
+    .orderBy(sort_by || "created_at", order || "desc")
+    .then((articles) => {
+      return articles;
+    });
+};
