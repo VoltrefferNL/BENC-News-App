@@ -514,9 +514,9 @@ describe("/api", () => {
             expect(body.msg).to.equal("Bad request");
           });
       });
-      it.only("Responds with statuscode 400, when passed an invalid value in the send body", () => {
+      it("Responds with statuscode 400, when passed an invalid value in the send body", () => {
         return request(app)
-          .patch("/api/comments/b4500")
+          .patch("/api/comments/1")
           .send({
             inc_votes: "B1",
           })
@@ -525,12 +525,53 @@ describe("/api", () => {
             expect(body.msg).to.equal("Bad request");
           });
       });
-      it.only("Responds with statuscode 400, when passed an invalid key in the send body", () => {
+      it("Responds with statuscode 400, when passed an invalid key in the send body", () => {
         return request(app)
-          .patch("/api/comments/b4500")
+          .patch("/api/comments/1")
           .send({
             inc_votesasd: 1,
           })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
+        const invalidMethods = ["post", "get", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/comments/1")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
+    });
+    describe.only("DELETE", () => {
+      it("Responds with statuscode 204, when passed a valid delete command", () => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(204)
+          .then(() => {
+            return connection("comments").where({ comment_id: 1 });
+          })
+          .then((comments) => {
+            expect(comments.length).to.equal(0);
+          });
+      });
+      it("Responds with a statuscode 404, when the comment_id is non-excistend", () => {
+        return request(app)
+          .delete("/api/comments/1000")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("No comment found for 1000");
+          });
+      });
+      it("Responds with a statuscode 400, when the comment_id is not valid", () => {
+        return request(app)
+          .delete("/api/comments/A1000")
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal("Bad request");

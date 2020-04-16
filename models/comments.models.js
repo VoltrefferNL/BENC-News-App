@@ -15,3 +15,17 @@ exports.updateComment = (comment_id, inc_votes) => {
       return comments;
     });
 };
+
+exports.deleteComment = (comment_id) => {
+  return connection("comments")
+    .del()
+    .where({ comment_id })
+    .then((comments) => {
+      if (comments === 0)
+        return Promise.reject({
+          status: 404,
+          msg: `No comment found for ${comment_id}`,
+        });
+      return comments;
+    });
+};
