@@ -7,7 +7,7 @@ exports.handleInvalidPaths = (req, res, next) => {
 };
 
 exports.errorPSQL = (err, req, res, next) => {
-  const psqlCodes = ["42703", "22P02"];
+  const psqlCodes = ["42703", "22P02", "23503"];
   console.log(err.code);
 
   if (psqlCodes.includes(err.code)) {

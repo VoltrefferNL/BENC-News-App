@@ -87,7 +87,7 @@ describe("/api", () => {
     describe("GET", () => {
       it("Responds with an article object, which should have the following properties: author, title, article_id, body, topic, created_at, votes, comment_count", () => {
         return request(app)
-          .get("/api/articles/5")
+          .get("/api/articles/1")
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.an("array");
@@ -201,12 +201,36 @@ describe("/api", () => {
             expect(comment[0].author).to.equal("rogersop");
           });
       });
-      it("Returns a 400 and a bad request error message if the key is not correct", () => {
+      it("Returns a 400 status and a bad request error message if a key is not correct", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({
             username: "rogersop",
             THIS_DOES_NOT_WORK: "WHAT A LOAD OF BULL****",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
+      it("Returns a 400 status and a error message if the username does not exist", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({
+            username: "Bertus557",
+            body: "WHAT A LOAD OF BULL****",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
+      it("Returns a 404 status and a error message if the article_id does not exist", () => {
+        return request(app)
+          .post("/api/articles/500/comments")
+          .send({
+            username: "Bertus557",
+            body: "WHAT A LOAD OF BULL****",
           })
           .expect(400)
           .then(({ body: { msg } }) => {
