@@ -577,6 +577,18 @@ describe("/api", () => {
             expect(body.msg).to.equal("Bad request");
           });
       });
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
+        const invalidMethods = ["post", "get", "put"];
+        const methodPromises = invalidMethods.map((method) => {
+          return request(app)
+            [method]("/api/comments/1")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
     });
   });
 });
