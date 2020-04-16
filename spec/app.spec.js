@@ -14,7 +14,7 @@ describe("/api", () => {
   after(() => connection.destroy());
   describe("/topics", () => {
     describe("GET", () => {
-      it("responds with an array of topic objects, each of which should have the following properties", () => {
+      it("Responds with statuscode 200, and an array of topic objects, each topic should have the following properties: description, slug", () => {
         return request(app)
           .get("/api/topics")
           .expect(200)
@@ -27,7 +27,7 @@ describe("/api", () => {
             expect(body.topics).to.be.ascendingBy("description");
           });
       });
-      it("Gives an 404 error when path isn't correct", () => {
+      it("Responds with statuscode 404, and an error message when path isn't correct", () => {
         return request(app)
           .get("/api/topicz")
           .expect(404)
@@ -35,7 +35,7 @@ describe("/api", () => {
             expect(msg).to.equal("Not Found dev err");
           });
       });
-      it("Respondes with a status:405 when invalid request methods are used", () => {
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
         const invalidMethods = ["patch", "post", "delete", "put"];
         const methodPromises = invalidMethods.map((method) => {
           return request(app)
@@ -51,7 +51,7 @@ describe("/api", () => {
   });
   describe("/users/:username", () => {
     describe("GET", () => {
-      it("Responds with an 200 status and a user object with the following proerties: username, avatar_url, name", () => {
+      it("Responds with statuscode 200, and a user object with the following properties: username, avatar_url, name", () => {
         return request(app)
           .get("/api/users/rogersop")
           .expect(200)
@@ -61,7 +61,7 @@ describe("/api", () => {
             expect(users[0].username).to.equal("rogersop");
           });
       });
-      it("Returns a 404 error when the user doesn't excist", () => {
+      it("Responds with statuscode 404, and an error message when the user doesn't excist", () => {
         return request(app)
           .get("/api/users/bert5")
           .expect(404)
@@ -69,7 +69,7 @@ describe("/api", () => {
             expect(msg).to.equal("No user found for bert5");
           });
       });
-      it("Respondes with a status:405 when invalid request methods are used", () => {
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
         const invalidMethods = ["patch", "post", "delete", "put"];
         const methodPromises = invalidMethods.map((method) => {
           return request(app)
@@ -85,7 +85,7 @@ describe("/api", () => {
   });
   describe("/articles/:article_id", () => {
     describe("GET", () => {
-      it("Responds with an article object, which should have the following properties: author, title, article_id, body, topic, created_at, votes, comment_count", () => {
+      it("Responds with statuscode 200, and a article object, which should have the following properties: author, title, article_id, body, topic, created_at, votes, comment_count", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
@@ -107,7 +107,7 @@ describe("/api", () => {
             });
           });
       });
-      it("Returns a 404 error when the article doesn't excist", () => {
+      it("Responds with statuscode 404, and an error message when the article doesn't excist", () => {
         return request(app)
           .get("/api/articles/15")
           .expect(404)
@@ -115,7 +115,7 @@ describe("/api", () => {
             expect(msg).to.equal("No article found for 15");
           });
       });
-      it("Respondes with a status:405 when invalid request methods are used", () => {
+      it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
         const invalidMethods = ["post", "delete", "put"];
         const methodPromises = invalidMethods.map((method) => {
           return request(app)
@@ -129,7 +129,7 @@ describe("/api", () => {
       });
     });
     describe("PATCH", () => {
-      it("Accepts an object send in a specific form for a patch request, then returns the article with updated vote count as indicated.", () => {
+      it("Accepts an object send in a specific form for a patch request, then responds with statuscode 200, and an article with updated vote count as indicated.", () => {
         return request(app)
           .patch("/api/articles/5")
           .send({ inc_votes: 5 })
@@ -151,7 +151,7 @@ describe("/api", () => {
             });
           });
       });
-      it("Returns a 400 and a bad request error message if the key is not correct", () => {
+      it("Responds with statuscode 400, and a bad request error message if the key is not correct", () => {
         return request(app)
           .patch("/api/articles/5")
           .send({ This_is_not_ok: 5 })
@@ -160,7 +160,7 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Returns a 404 error when the article doesn't excist", () => {
+      it("Responds with statuscode 404, and an error when the article doesn't excist", () => {
         return request(app)
           .get("/api/articles/115")
           .expect(404)
@@ -168,7 +168,7 @@ describe("/api", () => {
             expect(msg).to.equal("No article found for 115");
           });
       });
-      it("Returns a 400 error when passed an object with an invalid value", () => {
+      it("Responds with statuscode 400, when passed an object with an invalid value", () => {
         return request(app)
           .patch("/api/articles/5")
           .send({ inc_votes: "I am not a number" })
@@ -181,7 +181,7 @@ describe("/api", () => {
   });
   describe("/articles/:article_id/comments", () => {
     describe("POST", () => {
-      it("Returns a 201 status and adds a new comment to an article, then send the comment back", () => {
+      it("Accepts an object send in a specific form for a post request, then responds with statuscode 201, and adds a new comment to an article, then sends the comment back", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({ username: "rogersop", body: "WHAT A LOAD OF BULL****" })
@@ -201,7 +201,7 @@ describe("/api", () => {
             expect(comment[0].author).to.equal("rogersop");
           });
       });
-      it("Returns a 400 status and a bad request error message if a key is not correct", () => {
+      it("Responds with statuscode 400, and a bad request error message if a key is not correct", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({
@@ -213,7 +213,7 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Returns a 400 status and a error message if the username does not exist", () => {
+      it("Responds with statuscode 400, and a error message if the username does not exist", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({
@@ -225,7 +225,7 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Returns a 404 status and a error message if the article_id does not exist", () => {
+      it("Responds with statuscode 404, and a error message if the article_id does not exist", () => {
         return request(app)
           .post("/api/articles/500/comments")
           .send({
@@ -239,7 +239,7 @@ describe("/api", () => {
       });
     });
     describe("GET", () => {
-      it("Returns a status 200, and an array of comments for given article id", () => {
+      it("Responds with statuscode 200, and an array of comments for given article id", () => {
         return request(app)
           .get("/api/articles/1/comments")
           .expect(200)
@@ -258,7 +258,7 @@ describe("/api", () => {
             expect(comments).to.be.descendingBy("created_at");
           });
       });
-      it("Can you queries to return a status 200, and an array of comments for given article id ", () => {
+      it("Responds with statuscode 200, and an array of comments for given article id sorted by query entry", () => {
         return request(app)
           .get("/api/articles/1/comments?sort_by=votes")
           .expect(200)
@@ -277,7 +277,7 @@ describe("/api", () => {
             expect(comments).to.be.descendingBy("votes");
           });
       });
-      it("Can you queries to return a status 200, and an array of comments for given article id ", () => {
+      it("Responds with statuscode 200, and an array of comments for given article id order by query entry", () => {
         return request(app)
           .get("/api/articles/1/comments?order=asc")
           .expect(200)
@@ -296,7 +296,7 @@ describe("/api", () => {
             expect(comments).to.be.ascendingBy("created_at");
           });
       });
-      it("Returns a 400 status and a error message if the sort column doesn't exist", () => {
+      it("Responds with statuscode 400, and a error message if the sort column doesn't exist", () => {
         return request(app)
           .get("/api/articles/1/comments?sort_by=this_doesnt_work")
           .expect(400)
@@ -304,7 +304,7 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Returns a 404 status and a error message if the article id doesn't exist", () => {
+      it("Responds with statuscode 400, and a error message if the article id doesn't exist", () => {
         return request(app)
           .get("/api/articles/500/comments?order=this_doesnt_work")
           .expect(404)
@@ -312,7 +312,7 @@ describe("/api", () => {
             expect(msg).to.equal("No article found for article_id: 500");
           });
       });
-      it("Returns a 400 status and a error message if the sort column doesn't exist", () => {
+      it("Responds with statuscode 400, and a error message if the article id isn't properly formatted", () => {
         return request(app)
           .get("/api/articles/twohundred/comments")
           .expect(400)
@@ -324,7 +324,7 @@ describe("/api", () => {
   });
   describe("/articles", () => {
     describe("GET", () => {
-      it("Responds with a 200 status and an articles array that includes article objects", () => {
+      it("Responds with statuscode 200, and an articles array that includes article objects", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
@@ -344,7 +344,7 @@ describe("/api", () => {
             expect(articles).to.be.descendingBy("created_at");
           });
       });
-      it("Responds with an array of articles sorted according to queries", () => {
+      it("Responds with statuscode 200, and an array of articles sorted according to query entry", () => {
         return request(app)
           .get("/api/articles?sort_by=title")
           .expect(200)
@@ -353,7 +353,7 @@ describe("/api", () => {
             expect(articles).to.be.descendingBy("title");
           });
       });
-      it("Responds with an array of articles sorted according to queries", () => {
+      it("Responds with statuscode 200, and an array of articles ordered according to query entry", () => {
         return request(app)
           .get("/api/articles?order=asc")
           .expect(200)
@@ -362,7 +362,7 @@ describe("/api", () => {
             expect(articles).to.be.sortedBy("created_at");
           });
       });
-      it("Responds with an 400 status code and error message when passed an invalid sort column", () => {
+      it("Responds with statuscode 400, and an error message when passed an invalid sort column", () => {
         return request(app)
           .get("/api/articles?sort_by=asc")
           .expect(400)
@@ -370,7 +370,7 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Responds to an author query and returns an array of articles by queried author", () => {
+      it("Responds with statuscode 200, and returns an array of articles by query author", () => {
         return request(app)
           .get("/api/articles?author=butter_bridge")
           .expect(200)
@@ -382,7 +382,7 @@ describe("/api", () => {
             });
           });
       });
-      it("Responds with an 404 status code and error message when passed an invalid author query", () => {
+      it("Responds with statuscode 404, and an error message when passed an invalid author query", () => {
         return request(app)
           .get("/api/articles?author=bertus")
           .expect(404)
@@ -390,7 +390,7 @@ describe("/api", () => {
             expect(msg).to.equal("Not found");
           });
       });
-      it("Responds with an 404 status code and error message when passed an existing author with no articles", () => {
+      it("Responds with statuscode 404, and an error message when passed an existing author with no articles", () => {
         return request(app)
           .get("/api/articles?author=lurker")
           .expect(404)
@@ -398,7 +398,7 @@ describe("/api", () => {
             expect(msg).to.equal("No articles found by lurker / undefined");
           });
       });
-      it("Responds to an topic query and returns an array of articles by queried topic", () => {
+      it("Responds with statuscode 200, and returns an array of articles by query topic", () => {
         return request(app)
           .get("/api/articles?topic=mitch")
           .expect(200)
@@ -410,7 +410,7 @@ describe("/api", () => {
             });
           });
       });
-      it("Responds with an 404 status code and error message when passed an existing topic with no articles", () => {
+      it("Responds with statuscode 404, and an error message when passed an existing topic with no articles", () => {
         return request(app)
           .get("/api/articles?topic=paper")
           .expect(404)
@@ -420,9 +420,9 @@ describe("/api", () => {
       });
     });
   });
-  describe.only("/comments/:comment_id", () => {
+  describe.("/comments/:comment_id", () => {
     describe("PATCH", () => {
-      it("Accepts an object send in a specific form for a patch request, then returns the comment with updated vote count as indicated.", () => {
+      it("Accepts an object send in a specific form for a patch request, then responds with statuscode 200, and a comment with updated vote count as indicated.", () => {
         return request(app)
           .patch("/api/comments/1")
           .send({ inc_votes: 1 })

@@ -29,7 +29,7 @@ exports.getArticle = (article_id) => {
 exports.updateVote = (article_id, inc_votes) => {
   return connection("articles")
     .where("article_id", article_id)
-    .increment("votes", inc_votes || 0)
+    .increment("votes", inc_votes)
     .returning("*")
     .then((article) => {
       if (!article.length) {
