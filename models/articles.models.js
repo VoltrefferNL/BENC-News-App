@@ -11,17 +11,16 @@ exports.getArticle = (article_id) => {
       "articles.created_at",
       "articles.votes"
     )
-    .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
+    .leftJoin("comments", "comments.article_id", "articles.article_id")
     .count("comments.article_id AS comment_count")
     .groupBy("articles.article_id")
     .where({ "articles.article_id": article_id })
     .then((article) => {
-      if (!article.length) {
+      if (!article.length)
         return Promise.reject({
           status: 404,
           msg: `No article found for ${article_id}`,
         });
-      }
       return article;
     });
 };
@@ -32,12 +31,11 @@ exports.updateVote = (article_id, inc_votes) => {
     .increment("votes", inc_votes)
     .returning("*")
     .then((article) => {
-      if (!article.length) {
+      if (!article.length)
         return Promise.reject({
           status: 404,
           msg: `No article found for ${article_id}`,
         });
-      }
       return article;
     });
 };
@@ -49,10 +47,7 @@ exports.postCommentToArticle = ({ article_id }, postedComment) => {
       article_id,
       author: postedComment.username,
     })
-    .returning("*")
-    .then((comment) => {
-      return comment;
-    });
+    .returning("*");
 };
 
 exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {

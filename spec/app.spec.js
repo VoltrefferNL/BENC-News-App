@@ -492,6 +492,50 @@ describe("/api", () => {
             });
           });
       });
+      it("Responds with statuscode 404, when passed a comment_id that does not exist ", () => {
+        return request(app)
+          .patch("/api/comments/500")
+          .send({
+            inc_votes: 1,
+          })
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("No comment found for 500");
+          });
+      });
+      it("Responds with statuscode 400, when passed a comment_id in an invalid format", () => {
+        return request(app)
+          .patch("/api/comments/b4500")
+          .send({
+            inc_votes: 1,
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it.only("Responds with statuscode 400, when passed an invalid value in the send body", () => {
+        return request(app)
+          .patch("/api/comments/b4500")
+          .send({
+            inc_votes: "B1",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it.only("Responds with statuscode 400, when passed an invalid key in the send body", () => {
+        return request(app)
+          .patch("/api/comments/b4500")
+          .send({
+            inc_votesasd: 1,
+          })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
     });
   });
 });
