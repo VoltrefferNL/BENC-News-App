@@ -370,7 +370,7 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it.only("Responds to an author query and returns an array of articles by queried author", () => {
+      it("Responds to an author query and returns an array of articles by queried author", () => {
         return request(app)
           .get("/api/articles?author=butter_bridge")
           .expect(200)
@@ -416,6 +416,32 @@ describe("/api", () => {
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("No articles found by undefined / paper");
+          });
+      });
+    });
+  });
+  describe.only("/comments/:comment_id", () => {
+    describe("PATCH", () => {
+      it("Accepts an object send in a specific form for a patch request, then returns the comment with updated vote count as indicated.", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            console.log(comments);
+            expect(comments).to.be.an("array");
+            expect(comments[0].comment_id).to.equal(1);
+            expect(comments[0].votes).to.equal(17);
+            comments.forEach((comment) => {
+              expect(comment).to.have.all.keys(
+                "comment_id",
+                "votes",
+                "article_id",
+                "created_at",
+                "author",
+                "body"
+              );
+            });
           });
       });
     });
