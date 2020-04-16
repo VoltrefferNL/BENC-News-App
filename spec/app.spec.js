@@ -238,5 +238,88 @@ describe("/api", () => {
           });
       });
     });
+    describe.only("GET", () => {
+      it("Returns a status 200, and an array of comments for given article id", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).to.be.an("array");
+            expect(comments.length).to.equal(13);
+            comments.forEach((comment) => {
+              expect(comment).to.contain.keys(
+                "comment_id",
+                "votes",
+                "created_at",
+                "author",
+                "body"
+              );
+            });
+            expect(comments).to.be.descendingBy("created_at");
+          });
+      });
+      it("Can you queries to return a status 200, and an array of comments for given article id ", () => {
+        return request(app)
+          .get("/api/articles/1/comments?sort_by=votes")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).to.be.an("array");
+            expect(comments.length).to.equal(13);
+            comments.forEach((comment) => {
+              expect(comment).to.contain.keys(
+                "comment_id",
+                "votes",
+                "created_at",
+                "author",
+                "body"
+              );
+            });
+            expect(comments).to.be.descendingBy("votes");
+          });
+      });
+      it("Can you queries to return a status 200, and an array of comments for given article id ", () => {
+        return request(app)
+          .get("/api/articles/1/comments?order=asc")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).to.be.an("array");
+            expect(comments.length).to.equal(13);
+            comments.forEach((comment) => {
+              expect(comment).to.contain.keys(
+                "comment_id",
+                "votes",
+                "created_at",
+                "author",
+                "body"
+              );
+            });
+            expect(comments).to.be.ascendingBy("created_at");
+          });
+      });
+      it("Returns a 400 status and a error message if the sort column doesn't exist", () => {
+        return request(app)
+          .get("/api/articles/1/comments?sort_by=this_doesnt_work")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
+      it("Returns a 404 status and a error message if the article id doesn't exist", () => {
+        return request(app)
+          .get("/api/articles/500/comments?order=this_doesnt_work")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("No article found for article_id: 500");
+          });
+      });
+      it("Returns a 400 status and a error message if the sort column doesn't exist", () => {
+        return request(app)
+          .get("/api/articles/twohundred/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request");
+          });
+      });
+    });
   });
 });

@@ -3,6 +3,7 @@ const {
   sendArticle,
   patchVotes,
   postComment,
+  getComments,
 } = require("../controllers/articles.controllers");
 const { send405Error } = require("../errors/");
 const { checkPatchVotesBody, checkPostCommentBody } = require("../middelware");
@@ -16,6 +17,7 @@ articlesRouter
 articlesRouter
   .route("/:article_id/comments")
   .post(checkPostCommentBody, postComment)
+  .get(getComments)
   .all(send405Error);
 
 module.exports = articlesRouter;
