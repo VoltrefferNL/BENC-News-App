@@ -91,8 +91,8 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.an("array");
-            expect(articles[0].article_id).to.equal(5);
-            expect(articles[0].comment_count).to.equal("2");
+            expect(articles[0].article_id).to.equal(1);
+            expect(articles[0].comment_count).to.equal("13");
             articles.forEach((article) => {
               expect(article).to.have.all.keys(
                 "author",
@@ -322,7 +322,7 @@ describe("/api", () => {
       });
     });
   });
-  describe.only("/articles", () => {
+  describe("/articles", () => {
     describe("GET", () => {
       it("Responds with a 200 status and an articles array that includes article objects", () => {
         return request(app)

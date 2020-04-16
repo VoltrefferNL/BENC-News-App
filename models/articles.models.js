@@ -1,9 +1,8 @@
 const connection = require("../db/connection");
 
 exports.getArticle = (article_id) => {
-  return connection
+  return connection("articles")
     .select("articles.*")
-    .from("articles")
     .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
     .count("comments.article_id AS comment_count")
     .groupBy("articles.article_id")
@@ -20,11 +19,10 @@ exports.getArticle = (article_id) => {
 };
 
 exports.updateVote = (article_id, inc_votes) => {
-  return connection
+  return connection("articles")
     .where("article_id", article_id)
     .increment("votes", inc_votes || 0)
     .returning("*")
-    .from("articles")
     .then((article) => {
       if (!article.length) {
         return Promise.reject({
@@ -37,13 +35,12 @@ exports.updateVote = (article_id, inc_votes) => {
 };
 
 exports.postCommentToArticle = (article_id, postedComment) => {
-  return connection
+  return connection("comments")
     .insert({
       body: postedComment.body,
       article_id: article_id,
       author: postedComment.username,
     })
-    .into("comments")
     .returning("*")
     .then((comment) => {
       return comment;

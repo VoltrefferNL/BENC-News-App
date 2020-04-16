@@ -1,9 +1,8 @@
 const connection = require("../db/connection");
 
 exports.getUser = (username) => {
-  return connection
+  return connection("users")
     .select("username", "avatar_url", "name")
-    .from("users")
     .where("username", username)
     .then((user) => {
       if (!user.length) {

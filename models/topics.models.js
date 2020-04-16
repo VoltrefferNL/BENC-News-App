@@ -1,8 +1,7 @@
 const connection = require("../db/connection");
 
 exports.getAllTopics = () => {
-  return connection
+  return connection("topics")
     .select("slug", "description")
-    .from("topics")
     .orderBy("description");
 };
