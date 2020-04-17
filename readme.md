@@ -1,8 +1,8 @@
-# Northcoders News API
+# Backend Northcoders News API
 
 [Project hosted on Heroku](https://nc-news-voltreffer.herokuapp.com/api/)
 
-An Express server that provides data to the frontend of my reddit-style App. NC News will be a reddit clone with users/topics/articles/comments and the ability to up and downvote.
+An Express server that provides data to the frontend of my reddit-style App. The full App will be a reddit clone with users/topics/articles/comments and the ability to up and downvote.
 
 ## Copying the project:
 
@@ -12,7 +12,7 @@ Make a clone of project by typing the below in your terminal:
 git clone https://github.com/VoltrefferNL/BENC-News-App
 ```
 
-Install the server dependencies:
+Install the project dependencies:
 
 ```bash
 npm install
@@ -38,17 +38,16 @@ npm run start
 
 You can now find the project running on [http://localhost:9090](http://localhost:9090)
 
-Produce an initial GET request to /api/ for a list of available endpoints.
-
 ## Using the API
 
+Produce an initial GET request to /api/ for a list of available endpoints.
 The following endpoints are available
 
 ```http
 GET /api
 ```
 
----
+--
 
 ```http
 GET /api/topics
