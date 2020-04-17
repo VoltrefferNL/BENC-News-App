@@ -80,9 +80,9 @@ describe("/api", () => {
           .get("/api/users/rogersop")
           .expect(200)
           .then(({ body: { user } }) => {
-            expect(user).to.be.an("array");
-            expect(user[0]).to.have.all.keys("username", "avatar_url", "name");
-            expect(user[0].username).to.equal("rogersop");
+            expect(user).to.be.an("object");
+            expect(user).to.have.all.keys("username", "avatar_url", "name");
+            expect(user.username).to.equal("rogersop");
           });
       });
       it("Responds with statuscode 404, and an error message when the user doesn't excist", () => {

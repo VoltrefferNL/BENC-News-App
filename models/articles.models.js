@@ -36,7 +36,7 @@ exports.updateVote = (article_id, inc_votes) => {
           status: 404,
           msg: `No article found for ${article_id}`,
         });
-      return article[0];
+      return article;
     });
 };
 
