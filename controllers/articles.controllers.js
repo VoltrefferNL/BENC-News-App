@@ -20,8 +20,8 @@ exports.patchVotes = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   updateVote(article_id, inc_votes)
-    .then((articles) => {
-      res.status(200).send({ articles });
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

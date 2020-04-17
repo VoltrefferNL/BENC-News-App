@@ -84,8 +84,6 @@ exports.getArticles = ({ sort_by, order, author, topic }) => {
       if (author) {
         articleQuery.where("articles.author", "=", author);
       }
-    })
-    .modify((articleQuery) => {
       if (topic) {
         articleQuery.where("articles.topic", "=", topic);
       }

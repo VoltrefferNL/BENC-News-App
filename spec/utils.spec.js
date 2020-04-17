@@ -92,7 +92,7 @@ describe("makeRefObj", () => {
   });
 });
 
-describe.only("formatComments", () => {
+describe("formatComments", () => {
   it("returns an array when processing inputs", () => {
     const comments = [];
     const articleRef = {};

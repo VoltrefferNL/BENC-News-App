@@ -6,7 +6,6 @@ exports.formatDates = (unFormattedArticles) => {
 
 exports.makeRefObj = (list) => {
   const authorRef = {};
-  if (!list.length) return authorRef;
   list.forEach((article) => {
     authorRef[article.title] = article.article_id;
   });
@@ -14,7 +13,6 @@ exports.makeRefObj = (list) => {
 };
 
 exports.formatComments = (comments, articleRef) => {
-  if (!comments.length) return [];
   return comments.map((comment) => {
     return (formattedComment = {
       body: comment.body,

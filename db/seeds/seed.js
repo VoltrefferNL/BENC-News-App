@@ -23,10 +23,6 @@ exports.seed = function (knex) {
     .then((articleRows) => {
       const articleRef = makeRefObj(articleRows);
       const formattedComments = formatComments(commentData, articleRef);
-      return knex("comments")
-        .insert(formattedComments)
-        .then(() => {
-          console.log("Removed and Seeded database succesfully");
-        });
+      return knex("comments").insert(formattedComments);
     });
 };

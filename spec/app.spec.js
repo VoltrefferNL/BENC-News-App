@@ -12,7 +12,7 @@ beforeEach(() => connection.seed.run());
 
 describe("/api", () => {
   after(() => connection.destroy());
-  describe.only("/", () => {
+  describe("/", () => {
     describe("GET", () => {
       it("Responds with statuscode 200, and a JSON with all possible endpoints on the server", () => {
         return request(app)
@@ -159,11 +159,11 @@ describe("/api", () => {
           .patch("/api/articles/5")
           .send({ inc_votes: 5 })
           .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles).to.be.an("array");
-            expect(articles[0].article_id).to.equal(5);
-            expect(articles[0].votes).to.equal(5);
-            articles.forEach((article) => {
+          .then(({ body: { article } }) => {
+            expect(article).to.be.an("array");
+            expect(article[0].article_id).to.equal(5);
+            expect(article[0].votes).to.equal(5);
+            article.forEach((article) => {
               expect(article).to.have.all.keys(
                 "author",
                 "title",
@@ -500,11 +500,11 @@ describe("/api", () => {
           .patch("/api/comments/1")
           .send({ inc_votes: 1 })
           .expect(200)
-          .then(({ body: { comments } }) => {
-            expect(comments).to.be.an("array");
-            expect(comments[0].comment_id).to.equal(1);
-            expect(comments[0].votes).to.equal(17);
-            comments.forEach((comment) => {
+          .then(({ body: { comment } }) => {
+            expect(comment).to.be.an("array");
+            expect(comment[0].comment_id).to.equal(1);
+            expect(comment[0].votes).to.equal(17);
+            comment.forEach((comment) => {
               expect(comment).to.have.all.keys(
                 "comment_id",
                 "votes",
