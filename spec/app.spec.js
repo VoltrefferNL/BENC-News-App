@@ -12,6 +12,31 @@ beforeEach(() => connection.seed.run());
 
 describe("/api", () => {
   after(() => connection.destroy());
+  describe.only("/", () => {
+    describe("GET", () => {
+      it("Responds with statuscode 200, and a JSON with all possible endpoints on the server", () => {
+        return request(app)
+          .get("/api/")
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body);
+            expect(body).to.be.an("object");
+            expect(body).to.contain.keys(
+              "GET /api",
+              "GET /api/topics",
+              "GET /api/articles",
+              "GET /api/articles/:article_id",
+              "PATCH /api/articles/:article_id",
+              "POST /api/articles/:article_id/comments",
+              "GET /api/articles/:article_id/comments",
+              "GET /api/users:username",
+              "PATCH /api/comments/:comment_id",
+              "DELETE /api/comments/:comment_id"
+            );
+          });
+      });
+    });
+  });
   describe("/topics", () => {
     describe("GET", () => {
       it("Responds with statuscode 200, and an array of topic objects, each topic should have the following properties: description, slug", () => {
@@ -476,7 +501,6 @@ describe("/api", () => {
           .send({ inc_votes: 1 })
           .expect(200)
           .then(({ body: { comments } }) => {
-            console.log(comments);
             expect(comments).to.be.an("array");
             expect(comments[0].comment_id).to.equal(1);
             expect(comments[0].votes).to.equal(17);
@@ -549,7 +573,7 @@ describe("/api", () => {
         return Promise.all(methodPromises);
       });
     });
-    describe.only("DELETE", () => {
+    describe("DELETE", () => {
       it("Responds with statuscode 204, when passed a valid delete command", () => {
         return request(app)
           .delete("/api/comments/1")
