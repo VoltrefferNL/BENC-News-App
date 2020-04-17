@@ -43,65 +43,53 @@ You can now find the project running on [http://localhost:9090](http://localhost
 Produce an initial GET request to /api/ for a list of available endpoints.
 The following endpoints are available
 
+## /api/
+
 ```http
-GET /api
+GET /api/
 ```
 
---
+## /api/topics
 
 ```http
 GET /api/topics
 ```
 
----
-
 ```http
 POST /api/topics
 ```
 
----
+## /api/articles
 
 ```http
 GET /api/articles
 ```
 
----
-
 ```http
 POST /api/articles
 ```
-
----
 
 ```http
 GET /api/articles/:article_id
 ```
 
----
-
 ```http
 PATCH /api/articles/:article_id
 ```
-
----
 
 ```http
 DELETE /api/articles/:article_id
 ```
 
----
-
 ```http
 GET /api/articles/:article_id/comments
 ```
-
----
 
 ```http
 POST /api/articles/:article_id/comments
 ```
 
----
+## /api/comments
 
 ```http
 PATCH /api/comments/:comment_id
@@ -113,19 +101,15 @@ PATCH /api/comments/:comment_id
 DELETE /api/comments/:comment_id
 ```
 
----
+## /api/users
 
 ```http
 POST /api/users
 ```
 
----
-
 ```http
 GET /api/users
 ```
-
----
 
 ```http
 GET /api/users/:username
@@ -140,7 +124,6 @@ Niels de Visser
 ## Built With
 
 - [Node.JS](https://nodejs.org)
-- [generator-knexpress](https://github.com/AnthonyMedina/generator-knexpress)
 - [Express](https://expressjs.com/)
 - [Knex.js](https://knexjs.org)
 - [PostgreSQL](https://www.postgresql.org/)
