@@ -126,21 +126,19 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then(({ body: { article } }) => {
-            expect(article).to.be.an("array");
-            expect(article[0].article_id).to.equal(1);
-            expect(article[0].comment_count).to.equal("13");
-            article.forEach((article) => {
-              expect(article).to.have.all.keys(
-                "author",
-                "title",
-                "article_id",
-                "body",
-                "topic",
-                "created_at",
-                "votes",
-                "comment_count"
-              );
-            });
+            expect(article).to.be.an("object");
+            expect(article.article_id).to.equal(1);
+            expect(article.comment_count).to.equal("13");
+            expect(article).to.have.all.keys(
+              "author",
+              "title",
+              "article_id",
+              "body",
+              "topic",
+              "created_at",
+              "votes",
+              "comment_count"
+            );
           });
       });
       it("Responds with statuscode 404, and an error message when the article doesn't excist", () => {
@@ -236,9 +234,9 @@ describe("/api", () => {
           .expect(201)
 
           .then(({ body: { comment } }) => {
-            expect(comment[0].comment_id).to.equal(19);
-            expect(comment[0].body).to.equal("WHAT A LOAD OF BULL****");
-            expect(comment[0]).to.contain.keys(
+            expect(comment.comment_id).to.equal(19);
+            expect(comment.body).to.equal("WHAT A LOAD OF BULL****");
+            expect(comment).to.contain.keys(
               "comment_id",
               "votes",
               "created_at",
@@ -246,7 +244,7 @@ describe("/api", () => {
               "body",
               "article_id"
             );
-            expect(comment[0].author).to.equal("rogersop");
+            expect(comment.author).to.equal("rogersop");
           });
       });
       it("Responds with statuscode 400, and a bad request error message if a key is not correct", () => {
