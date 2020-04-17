@@ -14,16 +14,7 @@ exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {
   return connection("comments")
     .select("*")
     .where("article_id", article_id)
-    .orderBy(sort_by || "created_at", order || "desc")
-    .then((comments) => {
-      if (!comments.length) {
-        return Promise.reject({
-          status: 404,
-          msg: `No article found for article_id: ${article_id}`,
-        });
-      }
-      return comments;
-    });
+    .orderBy(sort_by || "created_at", order || "desc");
 };
 
 exports.updateComment = (comment_id, inc_votes) => {

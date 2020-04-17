@@ -259,16 +259,16 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Responds with statuscode 400, and a error message if the username does not exist", () => {
+      it("Responds with statuscode 404, and a error message if the username does not exist", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({
             username: "Bertus557",
             body: "WHAT A LOAD OF BULL****",
           })
-          .expect(400)
+          .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Bad request");
+            expect(msg).to.equal("Value not found");
           });
       });
       it("Responds with statuscode 404, and a error message if the article_id does not exist", () => {
@@ -278,9 +278,9 @@ describe("/api", () => {
             username: "Bertus557",
             body: "WHAT A LOAD OF BULL****",
           })
-          .expect(400)
+          .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Bad request");
+            expect(msg).to.equal("Value not found");
           });
       });
       it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
@@ -362,12 +362,12 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request");
           });
       });
-      it("Responds with statuscode 400, and a error message if the article id doesn't exist", () => {
+      it("Responds with statuscode 200, and an empty array if the article id doesn't exist", () => {
         return request(app)
           .get("/api/articles/500/comments?order=this_doesnt_work")
-          .expect(404)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("No article found for article_id: 500");
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).to.be.an("array");
           });
       });
       it("Responds with statuscode 400, and a error message if the article id isn't properly formatted", () => {

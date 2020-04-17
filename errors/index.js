@@ -7,11 +7,17 @@ exports.handleInvalidPaths = (req, res, next) => {
 };
 
 exports.errorPSQL = (err, req, res, next) => {
-  const psqlCodes = ["42703", "22P02", "23503"];
-  if (psqlCodes.includes(err.code)) {
-    res.status(400).send({ msg: "Bad request" });
-  }
-  next(err);
+  console.log(err.code);
+  const codes = {
+    "22P02": { status: 400, msg: "Bad request" },
+    "23502": { status: 400, msg: "Bad request" },
+    "23503": { status: 404, msg: "Value not found" },
+    "42703": { status: 400, msg: "Bad request" },
+  };
+  if (err.code in codes) {
+    const { status, msg } = codes[err.code];
+    res.status(status).send({ msg });
+  } else next(err);
 };
 
 exports.errorCustom = (err, req, res, next) => {
