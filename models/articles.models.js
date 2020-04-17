@@ -36,11 +36,18 @@ exports.updateVote = (article_id, inc_votes) => {
           status: 404,
           msg: `No article found for ${article_id}`,
         });
-      return article;
+      return article[0];
     });
 };
 
-exports.getArticles = ({ sort_by, order, author, topic }) => {
+exports.getArticles = ({
+  sort_by,
+  order,
+  author,
+  topic,
+  limit = 10,
+  p = 1,
+}) => {
   return connection("articles")
     .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
     .select(
@@ -55,13 +62,11 @@ exports.getArticles = ({ sort_by, order, author, topic }) => {
     .count("comments.article_id AS comment_count")
     .orderBy(sort_by || "created_at", order || "desc")
     .modify((articleQuery) => {
-      if (author) {
-        articleQuery.where("articles.author", "=", author);
-      }
-      if (topic) {
-        articleQuery.where("articles.topic", "=", topic);
-      }
-    });
+      if (author) articleQuery.where("articles.author", "=", author);
+      if (topic) articleQuery.where("articles.topic", "=", topic);
+    })
+    .limit(limit)
+    .offset((p - 1) * limit);
 };
 
 exports.checkInDb = (valueToCheck, column, table) => {

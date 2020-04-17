@@ -2,7 +2,7 @@
 
 [Project hosted on Heroku](https://nc-news-voltreffer.herokuapp.com/api/)
 
-An Express server that provides data to the frontend of my reddit-style App. The full App will be a reddit clone with users/topics/articles/comments and the ability to up and downvote.
+An Express server that provides data to the frontend of my reddit-style App. The full App will be a reddit clone with users/topics/articles/comments and the ability to up and downvote. The project uses a SQL database that interacts with Postgres. Knex has been used to build the avaible queries.
 
 ## Copying the project:
 
@@ -40,7 +40,7 @@ You can now find the project running on [http://localhost:9090](http://localhost
 
 ## Using the API
 
-Produce an initial GET request to /api/ for a list of available endpoints.
+Produce an initial GET request to /api/ for a list of available endpoints and their behaviours.
 The following endpoints are available
 
 ## /api/
@@ -95,8 +95,6 @@ POST /api/articles/:article_id/comments
 PATCH /api/comments/:comment_id
 ```
 
----
-
 ```http
 DELETE /api/comments/:comment_id
 ```
@@ -115,7 +113,17 @@ GET /api/users
 GET /api/users/:username
 ```
 
----
+## Running the tests
+
+A full TTD test suite in avaiable with the following commands:
+
+```http
+npm test
+```
+
+```http
+npm run test-utils
+```
 
 ## Author
 

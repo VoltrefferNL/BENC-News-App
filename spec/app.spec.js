@@ -79,10 +79,10 @@ describe("/api", () => {
         return request(app)
           .get("/api/users/rogersop")
           .expect(200)
-          .then(({ body: { users } }) => {
-            expect(users).to.be.an("array");
-            expect(users[0]).to.have.all.keys("username", "avatar_url", "name");
-            expect(users[0].username).to.equal("rogersop");
+          .then(({ body: { user } }) => {
+            expect(user).to.be.an("array");
+            expect(user[0]).to.have.all.keys("username", "avatar_url", "name");
+            expect(user[0].username).to.equal("rogersop");
           });
       });
       it("Responds with statuscode 404, and an error message when the user doesn't excist", () => {
@@ -113,11 +113,11 @@ describe("/api", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles).to.be.an("array");
-            expect(articles[0].article_id).to.equal(1);
-            expect(articles[0].comment_count).to.equal("13");
-            articles.forEach((article) => {
+          .then(({ body: { article } }) => {
+            expect(article).to.be.an("array");
+            expect(article[0].article_id).to.equal(1);
+            expect(article[0].comment_count).to.equal("13");
+            article.forEach((article) => {
               expect(article).to.have.all.keys(
                 "author",
                 "title",
@@ -159,20 +159,18 @@ describe("/api", () => {
           .send({ inc_votes: 5 })
           .expect(200)
           .then(({ body: { article } }) => {
-            expect(article).to.be.an("array");
-            expect(article[0].article_id).to.equal(5);
-            expect(article[0].votes).to.equal(5);
-            article.forEach((article) => {
-              expect(article).to.have.all.keys(
-                "author",
-                "title",
-                "article_id",
-                "body",
-                "topic",
-                "created_at",
-                "votes"
-              );
-            });
+            expect(article).to.be.an("object");
+            expect(article.article_id).to.equal(5);
+            expect(article.votes).to.equal(5);
+            expect(article).to.have.all.keys(
+              "author",
+              "title",
+              "article_id",
+              "body",
+              "topic",
+              "created_at",
+              "votes"
+            );
           });
       });
       it("Responds with statuscode 200, and an unchanged article message if the key is not correct or missing", () => {
@@ -181,9 +179,9 @@ describe("/api", () => {
           .send({})
           .expect(200)
           .then(({ body: { article } }) => {
-            expect(article).to.be.an("array");
-            expect(article[0].article_id).to.equal(5);
-            expect(article[0].votes).to.equal(0);
+            expect(article).to.be.an("object");
+            expect(article.article_id).to.equal(5);
+            expect(article.votes).to.equal(0);
           });
       });
       it("Responds with statuscode 404, and an error when the article doesn't excist", () => {
@@ -471,7 +469,7 @@ describe("/api", () => {
             expect(articles).to.be.an("array");
             articles.forEach((article) => {
               expect(article.topic).to.equal("mitch");
-              expect(articles.length).to.equal(11);
+              expect(articles.length).to.equal(10);
             });
           });
       });
