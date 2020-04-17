@@ -514,19 +514,17 @@ describe("/api", () => {
           .send({ inc_votes: 1 })
           .expect(200)
           .then(({ body: { comment } }) => {
-            expect(comment).to.be.an("array");
-            expect(comment[0].comment_id).to.equal(1);
-            expect(comment[0].votes).to.equal(17);
-            comment.forEach((comment) => {
-              expect(comment).to.have.all.keys(
-                "comment_id",
-                "votes",
-                "article_id",
-                "created_at",
-                "author",
-                "body"
-              );
-            });
+            expect(comment).to.be.an("object");
+            expect(comment.comment_id).to.equal(1);
+            expect(comment.votes).to.equal(17);
+            expect(comment).to.have.all.keys(
+              "comment_id",
+              "votes",
+              "article_id",
+              "created_at",
+              "author",
+              "body"
+            );
           });
       });
       it("Responds with statuscode 404, when passed a comment_id that does not exist ", () => {
@@ -562,7 +560,7 @@ describe("/api", () => {
             expect(body.msg).to.equal("Bad request");
           });
       });
-      it("Responds with statuscode 400, when passed an invalid key in the send body", () => {
+      it("Responds with statuscode 200, when passed an invalid key in the send body", () => {
         return request(app)
           .patch("/api/comments/1")
           .send({
@@ -570,7 +568,7 @@ describe("/api", () => {
           })
           .expect(200)
           .then(({ body: { comment } }) => {
-            expect(comment).to.be.an("array");
+            expect(comment).to.be.an("object");
           });
       });
       it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {
