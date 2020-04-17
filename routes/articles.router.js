@@ -1,17 +1,16 @@
 const articlesRouter = require("express").Router();
+
 const {
   sendArticle,
   patchVotes,
   sendArticles,
 } = require("../controllers/articles.controllers");
-
 const {
   postComment,
   getComments,
 } = require("../controllers/comments.controllers");
-
 const { send405Error } = require("../errors/");
-const { checkPatchVotesBody, checkPostCommentBody } = require("../middelware");
+const { checkPostCommentBody } = require("../middelware");
 
 articlesRouter.route("/").get(sendArticles).all(send405Error);
 
