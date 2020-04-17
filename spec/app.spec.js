@@ -560,9 +560,9 @@ describe("/api", () => {
           .send({
             inc_votesasd: 1,
           })
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).to.equal("Bad request");
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment).to.be.an("array");
           });
       });
       it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {

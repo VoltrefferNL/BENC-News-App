@@ -8,7 +8,7 @@ const { checkPatchVotesBody } = require("../middelware");
 
 commentsRouter
   .route("/:comment_id")
-  .patch(checkPatchVotesBody, patchComment)
+  .patch(patchComment)
   .delete(deleteCommentById)
   .all(send405Error);
 
