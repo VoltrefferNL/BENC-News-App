@@ -1,8 +1,7 @@
 const {
   getArticle,
   updateVote,
-  postCommentToArticle,
-  getCommentsOnArticle,
+
   getArticles,
   checkInDb,
 } = require("../models/articles.models");
@@ -26,30 +25,10 @@ exports.patchVotes = (req, res, next) => {
     .catch(next);
 };
 
-exports.postComment = (req, res, next) => {
-  const { article_id } = req.params;
-  const postedComment = req.body;
-  postCommentToArticle({ article_id }, postedComment)
-    .then((comment) => {
-      res.status(201).send({ comment });
-    })
-    .catch(next);
-};
-
-exports.getComments = (req, res, next) => {
-  const { article_id } = req.params;
-  const { sort_by, order } = req.query;
-  getCommentsOnArticle({ article_id, sort_by, order })
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch(next);
-};
-
 exports.sendArticles = (req, res, next) => {
   const { author, topic } = req.query;
-  Promise.all([getArticles(req.query)])
-    .then(([articles]) => {
+  getArticles(req.query)
+    .then((articles) => {
       const authorInDb = author ? checkInDb(author, "username", "users") : null;
       const topicInDb = topic ? checkInDb(topic, "slug", "topics") : null;
       return Promise.all([authorInDb, topicInDb, articles]);
@@ -58,7 +37,7 @@ exports.sendArticles = (req, res, next) => {
       if (authorInDb === false || topicInDb === false)
         return Promise.reject({
           status: 404,
-          msg: `No articles found with ${req.query}.`,
+          msg: `No articles found with either topic or author.`,
         });
       else res.status(200).send({ articles });
     })

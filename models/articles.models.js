@@ -28,7 +28,7 @@ exports.getArticle = (article_id) => {
 exports.updateVote = (article_id, inc_votes) => {
   return connection("articles")
     .where("article_id", article_id)
-    .increment("votes", inc_votes)
+    .increment("votes", inc_votes || 0)
     .returning("*")
     .then((article) => {
       if (!article.length)
@@ -37,32 +37,6 @@ exports.updateVote = (article_id, inc_votes) => {
           msg: `No article found for ${article_id}`,
         });
       return article;
-    });
-};
-
-exports.postCommentToArticle = ({ article_id }, postedComment) => {
-  return connection("comments")
-    .insert({
-      body: postedComment.body,
-      article_id,
-      author: postedComment.username,
-    })
-    .returning("*");
-};
-
-exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {
-  return connection("comments")
-    .select("*")
-    .where("article_id", article_id)
-    .orderBy(sort_by || "created_at", order || "desc")
-    .then((comments) => {
-      if (!comments.length) {
-        return Promise.reject({
-          status: 404,
-          msg: `No article found for article_id: ${article_id}`,
-        });
-      }
-      return comments;
     });
 };
 
@@ -87,15 +61,6 @@ exports.getArticles = ({ sort_by, order, author, topic }) => {
       if (topic) {
         articleQuery.where("articles.topic", "=", topic);
       }
-    })
-    .then((comments) => {
-      if (!comments.length) {
-        return Promise.reject({
-          status: 404,
-          msg: `No articles found by ${author} / ${topic}`,
-        });
-      }
-      return comments;
     });
 };
 

@@ -19,7 +19,6 @@ describe("/api", () => {
           .get("/api/")
           .expect(200)
           .then(({ body }) => {
-            console.log(body);
             expect(body).to.be.an("object");
             expect(body).to.contain.keys(
               "GET /api",
@@ -176,13 +175,15 @@ describe("/api", () => {
             });
           });
       });
-      it("Responds with statuscode 400, and a bad request error message if the key is not correct", () => {
+      it("Responds with statuscode 200, and an unchanged article message if the key is not correct or missing", () => {
         return request(app)
           .patch("/api/articles/5")
-          .send({ This_is_not_ok: 5 })
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Bad request");
+          .send({})
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article).to.be.an("array");
+            expect(article[0].article_id).to.equal(5);
+            expect(article[0].votes).to.equal(0);
           });
       });
       it("Responds with statuscode 404, and an error when the article doesn't excist", () => {
@@ -448,15 +449,18 @@ describe("/api", () => {
           .get("/api/articles?author=bertus")
           .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("No articles found by bertus / undefined");
+            expect(msg).to.equal(
+              "No articles found with either topic or author."
+            );
           });
       });
-      it("Responds with statuscode 404, and an error message when passed an existing author with no articles", () => {
+      it("Responds with statuscode 200, and an empty array when passed an existing author with no articles", () => {
         return request(app)
           .get("/api/articles?author=lurker")
-          .expect(404)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("No articles found by lurker / undefined");
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles.length).to.equal(0);
           });
       });
       it("Responds with statuscode 200, and returns an array of articles by query topic", () => {
@@ -471,12 +475,13 @@ describe("/api", () => {
             });
           });
       });
-      it("Responds with statuscode 404, and an error message when passed an existing topic with no articles", () => {
+      it("Responds with statuscode 200, and an empty array when passed an existing topic with no articles", () => {
         return request(app)
           .get("/api/articles?topic=paper")
-          .expect(404)
-          .then(({ body: { msg } }) => {
-            expect(msg).to.equal("No articles found by undefined / paper");
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).to.be.an("array");
+            expect(articles.length).to.equal(0);
           });
       });
       it("Responds with statuscode 405, and an error message when invalid request methods are used", () => {

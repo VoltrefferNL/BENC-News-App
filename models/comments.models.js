@@ -1,5 +1,31 @@
 const connection = require("../db/connection");
 
+exports.postCommentToArticle = ({ article_id }, postedComment) => {
+  return connection("comments")
+    .insert({
+      body: postedComment.body,
+      article_id,
+      author: postedComment.username,
+    })
+    .returning("*");
+};
+
+exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {
+  return connection("comments")
+    .select("*")
+    .where("article_id", article_id)
+    .orderBy(sort_by || "created_at", order || "desc")
+    .then((comments) => {
+      if (!comments.length) {
+        return Promise.reject({
+          status: 404,
+          msg: `No article found for article_id: ${article_id}`,
+        });
+      }
+      return comments;
+    });
+};
+
 exports.updateComment = (comment_id, inc_votes) => {
   return connection("comments")
     .where("comment_id", comment_id)
