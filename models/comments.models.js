@@ -10,11 +10,22 @@ exports.postCommentToArticle = ({ article_id }, postedComment) => {
     .returning("*");
 };
 
-exports.getCommentsOnArticle = ({ article_id, sort_by, order }) => {
+exports.getCommentsOnArticle = ({
+  article_id,
+  sort_by,
+  order,
+  limit = 10,
+  p = 1,
+}) => {
+  if (/\D/.test(limit) || /\D/.test(p)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
   return connection("comments")
     .select("*")
     .where("article_id", article_id)
-    .orderBy(sort_by || "created_at", order || "desc");
+    .orderBy(sort_by || "created_at", order || "desc")
+    .limit(limit)
+    .offset((p - 1) * limit);
 };
 
 exports.updateComment = (comment_id, inc_votes) => {

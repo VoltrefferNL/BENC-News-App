@@ -48,6 +48,9 @@ exports.getArticles = ({
   limit = 10,
   p = 1,
 }) => {
+  if (/\D/.test(limit) || /\D/.test(p)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
   return connection("articles")
     .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
     .select(
@@ -75,5 +78,17 @@ exports.checkInDb = (valueToCheck, column, table) => {
     .where(column, valueToCheck)
     .then((results) => {
       return results.length !== 0;
+    });
+};
+
+exports.countArticles = ({ author, topic }) => {
+  return connection("articles")
+    .count("article_id AS total_count")
+    .modify((countQuery) => {
+      if (author) countQuery.where({ "articles.author": author });
+      if (topic) countQuery.where({ topic });
+    })
+    .then(([{ total_count }]) => {
+      return total_count;
     });
 };

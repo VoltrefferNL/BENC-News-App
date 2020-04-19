@@ -303,7 +303,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { comments } }) => {
             expect(comments).to.be.an("array");
-            expect(comments.length).to.equal(13);
+            expect(comments.length).to.equal(10);
             comments.forEach((comment) => {
               expect(comment).to.contain.keys(
                 "comment_id",
@@ -322,7 +322,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { comments } }) => {
             expect(comments).to.be.an("array");
-            expect(comments.length).to.equal(13);
+            expect(comments.length).to.equal(10);
             comments.forEach((comment) => {
               expect(comment).to.contain.keys(
                 "comment_id",
@@ -341,7 +341,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { comments } }) => {
             expect(comments).to.be.an("array");
-            expect(comments.length).to.equal(13);
+            expect(comments.length).to.equal(10);
             comments.forEach((comment) => {
               expect(comment).to.contain.keys(
                 "comment_id",
@@ -389,6 +389,62 @@ describe("/api", () => {
             });
         });
         return Promise.all(methodPromises);
+      });
+      it("Responds with statuscode 200, and a page of articles with a default limit set to 10", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).to.equal(10);
+          });
+      });
+      it("Responds with statuscode 200, takes a page query and responds with the articles from that page", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=2")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).to.equal(3);
+          });
+      });
+      it("Responds with statuscode 200, takes a page query and responds with an empty array when page query is too high", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=5")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).to.equal(0);
+          });
+      });
+      it("Responds with statuscode 400, and an message Bad request", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=abc")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it("Responds with statuscode 200: and a limited list of articles according to query input", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=5")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).to.equal(5);
+          });
+      });
+      it("Responds with statuscode 400: If the limit query is not an integer", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=a")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it("Responds with statusocde 400: and an error message when query isn't in the correct format", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=8.1")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
       });
     });
   });
@@ -503,6 +559,70 @@ describe("/api", () => {
             });
         });
         return Promise.all(methodPromises);
+      });
+      it("Responds with statuscode 200, and a page of articles with a default limit set to 10", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      it("Responds with statuscode 200, takes a page query and responds with the articles from that page", () => {
+        return request(app)
+          .get("/api/articles?p=2")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(2);
+          });
+      });
+      it("Responds with statuscode 200, takes a page query and responds with an empty array when page query is too high", () => {
+        return request(app)
+          .get("/api/articles?p=5")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(0);
+          });
+      });
+      it("Responds with statuscode 400, and an message Bad request", () => {
+        return request(app)
+          .get("/api/articles?p=abc")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it("responds with statuscode 200: total_count is the total count regardless of the limit used", () => {
+        return request(app)
+          .get("/api/articles?limit=2")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.total_count).to.equal("12");
+          });
+      });
+      it("Responds with statuscode 200: and a limited list of articles according to query input", () => {
+        return request(app)
+          .get("/api/articles?limit=5")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(5);
+          });
+      });
+      it("Responds with statuscode 400: If the limit query is not an integer", () => {
+        return request(app)
+          .get("/api/articles?limit=a")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
+      });
+      it("Responds with statusocde 400: and an error message when query isn't in the correct format", () => {
+        return request(app)
+          .get("/api/articles?p=8.1")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal("Bad request");
+          });
       });
     });
   });
