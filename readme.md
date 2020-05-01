@@ -2,7 +2,7 @@
 
 [Project hosted on Heroku](https://nc-news-voltreffer.herokuapp.com/api/)
 
-An Express server that provides data to the frontend of my reddit-style App. The full App will be a reddit clone with users/topics/articles/comments and the ability to up and downvote. The project uses a SQL database that interacts with Postgres. Knex has been used to build the avaible queries.
+An Express server that provides data to the frontend of my reddit-style App. The full App will be a reddit clone with users, topics, articles, comments and the ability to up and downvote on both comments and articles. The project uses a SQL database that interacts with Postgres. Knex has been used to build the available queries.
 
 ## Copying the project:
 

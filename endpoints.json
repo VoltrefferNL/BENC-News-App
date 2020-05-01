@@ -25,7 +25,7 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves a user object with the following properties: username, avatar_url, name",
+    "description": "serves a aticle object with the following properties: author, title, body, article_id, topic, created_at, votes, comment_count",
     "queries": [],
     "exampleResponse": {
       "articles": [
