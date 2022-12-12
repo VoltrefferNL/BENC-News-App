@@ -30,7 +30,7 @@
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "knex": "^0.20.14",
     "pg": "^8.0.2",
     "sams-chai-sorted": "^1.0.2"
